@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Checkout — XXXXXX</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"/>
+<style>
+:root{
+  --charcoal:#2B2B2B;
+  --iron:#565656;
+  --fog:#848484;
+  --silver:#B3B3B3;
+  --cloud:#E0E0E0;
+  --white:#FFFFFF;
+  --bg:#F7F7F7;
+  --accent:#d4af37;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;}
+body{font-family:'Montserrat',sans-serif;background:var(--white);color:var(--charcoal);overflow-x:hidden;}
+
+/* ANNOUNCEMENT */
+.announcement{background:var(--charcoal);color:var(--white);text-align:center;padding:10px 16px;font-size:11px;letter-spacing:2px;text-transform:uppercase;word-break:break-word;}
+
+/* NAVIGATION */
+nav{background:var(--white);border-bottom:1px solid var(--cloud);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;letter-spacing:6px;color:var(--charcoal);text-decoration:none;flex:1;}
+.nav-icons{display:flex;align-items:center;gap:24px;}
+.nav-icons a{color:var(--charcoal);font-size:20px;text-decoration:none;position:relative;transition:color 0.3s;}
+.nav-icons a:hover{color:var(--iron);}
+.cart-count{position:absolute;top:-8px;right:-8px;background:var(--charcoal);color:var(--white);width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;}
+.menu-toggle{display:none;flex-direction:column;gap:6px;cursor:pointer;background:none;border:none;padding:8px;}
+.menu-toggle span{width:24px;height:2px;background:var(--charcoal);transition:all 0.3s;}
+
+/* MOBILE MENU */
+.mobile-menu{display:none;position:fixed;top:60px;left:0;right:0;bottom:0;background:var(--white);z-index:99;flex-direction:column;overflow-y:auto;border-top:1px solid var(--cloud);}
+.mobile-menu.active{display:flex;}
+.mobile-menu-item{padding:16px 20px;border-bottom:1px solid var(--cloud);font-size:14px;text-decoration:none;color:var(--charcoal);display:block;}
+.mobile-menu-item:hover{background:var(--bg);}
+
+/* STEPS */
+.checkout-steps{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;padding:20px 16px;border-bottom:1px solid var(--cloud);background:var(--white);}
+.step{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--silver);min-width:max-content;}
+.step.active{color:var(--charcoal);}
+.step.done{color:var(--fog);}
+.step-num{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--cloud);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;font-weight:600;}
+.step.active .step-num{background:var(--charcoal);color:var(--white);border-color:var(--charcoal);}
+.step.done .step-num{background:var(--fog);color:var(--white);border-color:var(--fog);}
+.step-divider{width:50px;height:1px;background:var(--cloud);margin:0 4px;}
+
+/* LAYOUT */
+.checkout-layout{display:grid;grid-template-columns:1fr 380px;gap:0;min-height:calc(100vh - 200px);background:var(--white);}
+.checkout-form-side{padding:40px;border-right:1px solid var(--cloud);overflow-y:auto;}
+.checkout-summary-side{padding:40px;background:var(--bg);overflow-y:auto;border-left:1px solid var(--cloud);}
+
+/* FORM STYLING */
+.section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;margin-bottom:24px;letter-spacing:1px;color:var(--charcoal);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.form-row.full{grid-template-columns:1fr;}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:0;}
+.form-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--fog);font-weight:500;}
+.form-input,.form-select{padding:12px 14px;border:1px solid var(--cloud);outline:none;font-size:13px;font-family:'Montserrat',sans-serif;color:var(--charcoal);background:var(--white);transition:all 0.3s;border-radius:2px;width:100%;}
+.form-input:focus,.form-select:focus{border-color:var(--charcoal);box-shadow:0 0 0 3px rgba(43,43,43,0.05);}
+.form-input::placeholder{color:var(--silver);}
+.form-select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232B2B2B' d='M6 9L1 4h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;}
+.divider{height:1px;background:var(--cloud);margin:32px 0;}
+
+/* PAYMENT METHODS */
+.payment-methods{display:flex;flex-direction:column;gap:12px;margin-bottom:24px;}
+.payment-option{display:flex;align-items:center;gap:12px;padding:14px 16px;border:2px solid var(--cloud);cursor:pointer;transition:all 0.3s;border-radius:4px;background:var(--white);}
+.payment-option:hover{border-color:var(--iron);background:var(--bg);}
+.payment-option.selected{border-color:var(--charcoal);background:rgba(43,43,43,0.02);}
+.payment-option input[type="radio"]{width:18px;height:18px;cursor:pointer;accent-color:var(--charcoal);}
+.payment-option-label{font-size:13px;letter-spacing:0.5px;font-weight:500;flex:1;}
+.payment-option-icons{display:flex;gap:6px;margin-left:auto;}
+.pay-icon{font-size:10px;padding:4px 10px;background:var(--charcoal);color:var(--white);letter-spacing:1px;text-transform:uppercase;border-radius:2px;font-weight:600;}
+
+/* CARD FIELDS */
+.card-fields{padding:16px;background:var(--bg);border:1px solid var(--cloud);margin-top:0;display:none;border-radius:4px;}
+.card-fields.show{display:block;}
+
+/* ACTIONS */
+.checkout-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:32px;padding-top:24px;border-top:1px solid var(--cloud);}
+.btn-back{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--charcoal);text-decoration:none;display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all 0.3s;font-weight:500;}
+.btn-back:hover{gap:14px;color:var(--iron);}
+.btn-place{padding:14px 32px;background:var(--charcoal);color:var(--white);border:none;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all 0.3s;display:flex;align-items:center;gap:10px;font-weight:600;border-radius:2px;flex:1;justify-content:center;}
+.btn-place:hover{background:var(--iron);transform:translateY(-2px);}
+.btn-place:active{transform:translateY(0);}
+
+/* SUMMARY SIDE */
+.summary-items{margin-bottom:24px;}
+.summary-item{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--cloud);}
+.summary-item:last-child{border-bottom:none;}
+.summary-item-img{width:60px;height:75px;background:var(--cloud);display:flex;align-items:center;justify-content:center;color:var(--silver);font-size:24px;flex-shrink:0;position:relative;border-radius:2px;}
+.item-qty-badge{position:absolute;top:-8px;right:-8px;width:22px;height:22px;background:var(--charcoal);color:var(--white);border-radius:50%;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;border:2px solid var(--white);}
+.summary-item-name{font-size:12px;font-weight:600;margin-bottom:4px;color:var(--charcoal);}
+.summary-item-meta{font-size:11px;color:var(--fog);}
+.summary-item-price{margin-left:auto;font-size:13px;font-weight:600;color:var(--charcoal);white-space:nowrap;}
+
+/* COUPON */
+.coupon-row{display:flex;gap:0;border:1px solid var(--cloud);margin-bottom:24px;border-radius:4px;overflow:hidden;}
+.coupon-input{flex:1;padding:12px 14px;border:none;outline:none;font-size:12px;font-family:'Montserrat',sans-serif;color:var(--charcoal);}
+.coupon-input::placeholder{color:var(--silver);}
+.coupon-btn{padding:12px 16px;background:var(--charcoal);color:var(--white);border:none;font-size:11px;letter-spacing:2px;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;font-weight:600;transition:background 0.3s;white-space:nowrap;}
+.coupon-btn:hover{background:var(--iron);}
+
+/* SUMMARY ROWS */
+.summary-rows{border-top:1px solid var(--cloud);padding-top:16px;margin-bottom:16px;}
+.sum-row{display:flex;justify-content:space-between;padding:8px 0;font-size:12px;}
+.sum-label{color:var(--fog);}
+.sum-value{font-weight:500;color:var(--charcoal);}
+.sum-total{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-top:2px solid var(--charcoal);margin-top:8px;}
+.sum-total-label{font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:600;color:var(--charcoal);}
+.sum-total-val{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:var(--charcoal);}
+
+/* SECURITY INFO */
+.security-info{margin-top:24px;padding:16px;background:var(--white);border:1px solid var(--cloud);border-radius:4px;}
+.security-item{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--fog);margin-bottom:10px;line-height:1.4;}
+.security-item:last-child{margin-bottom:0;}
+.security-item i{color:var(--charcoal);font-size:14px;flex-shrink:0;}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .checkout-layout{grid-template-columns:1fr;}
+  .checkout-form-side{border-right:none;border-bottom:1px solid var(--cloud);}
+  .checkout-summary-side{border-left:none;border-top:1px solid var(--cloud);}
+  .form-row{grid-template-columns:1fr;}
+  .step-divider{width:40px;}
+}
+
+@media(max-width:768px){
+  nav{padding:14px 16px;}
+  .nav-logo{font-size:18px;letter-spacing:4px;}
+  .nav-icons{gap:16px;}
+  .menu-toggle{display:flex;}
+  
+  .checkout-steps{padding:16px;gap:4px;}
+  .step{font-size:9px;}
+  .step-num{width:24px;height:24px;font-size:9px;}
+  .step-divider{width:30px;margin:0 2px;}
+  .step span{display:none;}
+  
+  .checkout-form-side{padding:24px 16px;}
+  .checkout-summary-side{padding:24px 16px;}
+  
+  .section-title{font-size:18px;margin-bottom:18px;}
+  .form-row{gap:12px;}
+  .form-input,.form-select{padding:11px 12px;font-size:13px;}
+  .divider{margin:24px 0;}
+  
+  .payment-option{padding:12px 14px;gap:10px;}
+  .payment-option-label{font-size:12px;}
+  .pay-icon{font-size:9px;padding:3px 8px;}
+  
+  .checkout-actions{flex-direction:column-reverse;gap:12px;margin-top:24px;padding-top:16px;}
+  .btn-back{width:100%;justify-content:center;}
+  .btn-place{width:100%;}
+  
+  .summary-item{gap:10px;padding:12px 0;}
+  .summary-item-img{width:50px;height:60px;font-size:18px;}
+  .summary-item-name{font-size:11px;}
+  .summary-item-meta{font-size:10px;}
+  .summary-item-price{font-size:12px;}
+  
+  .sum-row{font-size:11px;padding:6px 0;}
+  .sum-total-val{font-size:24px;}
+  .sum-total-label{font-size:11px;}
+  
+  .coupon-input,.coupon-btn{font-size:11px;padding:10px 12px;}
+  
+  .security-info{margin-top:16px;}
+  .security-item{font-size:10px;gap:8px;}
+}
+
+@media(max-width:480px){
+  .announcement{font-size:10px;padding:8px 12px;letter-spacing:1px;}
+  nav{padding:12px;}
+  .nav-logo{font-size:14px;letter-spacing:3px;}
+  .nav-icons{gap:12px;}
+  .nav-icons a{font-size:18px;}
+  
+  .checkout-steps{padding:12px;gap:2px;}
+  .step-divider{width:20px;margin:0 1px;}
+  
+  .checkout-form-side,.checkout-summary-side{padding:16px 12px;}
+  .section-title{font-size:16px;margin-bottom:16px;}
+  
+  .form-group{margin-bottom:12px;}
+  .form-row{gap:10px;margin-bottom:12px;}
+  .form-input,.form-select{padding:10px 11px;font-size:12px;}
+  
+  .divider{margin:20px 0;}
+  
+  .payment-option{padding:11px 12px;gap:8px;}
+  .payment-option input[type="radio"]{width:16px;height:16px;}
+  
+  .checkout-actions{gap:10px;margin-top:20px;padding-top:12px;}
+  .btn-back{font-size:10px;gap:6px;}
+  .btn-place{font-size:11px;padding:12px 20px;}
+  
+  .summary-item{gap:8px;padding:10px 0;}
+  .summary-item-img{width:45px;height:55px;}
+  .summary-item-name{font-size:10px;}
+  
+  .sum-row{font-size:10px;}
+  .sum-total-label{font-size:10px;letter-spacing:1px;}
+  .sum-total-val{font-size:20px;}
+  
+  .coupon-input,.coupon-btn{font-size:10px;padding:9px 10px;}
+  
+  .security-item{font-size:9px;}
+}
+</style>
+</head>
+<body>
+
+<div class="announcement">Free shipping on orders over $150 — Use code: XXXXXX</div>
+
+<nav>
+  <a href="index.html" class="nav-logo">XXXXXX</a>
+  <div class="nav-icons">
+    <a href="cart.html" style="position:relative;">
+      <i class="bi bi-bag"></i>
+      <span class="cart-count">0</span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" class="mobile-menu-item">Home</a>
+  <a href="cart.html" class="mobile-menu-item">Cart</a>
+  <a href="#" class="mobile-menu-item">Account</a>
+  <a href="#" class="mobile-menu-item">Help</a>
+</div>
+
+<div class="checkout-steps">
+  <div class="step done">
+    <div class="step-num"><i class="bi bi-check"></i></div>
+    <span>Cart</span>
+  </div>
+  <div class="step-divider"></div>
+  <div class="step active">
+    <div class="step-num">2</div>
+    <span>Checkout</span>
+  </div>
+  <div class="step-divider"></div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <span>Confirmation</span>
+  </div>
+</div>
+
+<div class="checkout-layout">
+
+  <!-- FORM SIDE -->
+  <div class="checkout-form-side">
+
+    <!-- CONTACT -->
+    <h2 class="section-title">Contact Information</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input class="form-input" type="text" placeholder="First Name" id="firstName"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Last Name</label>
+        <input class="form-input" type="text" placeholder="Last Name" id="lastName"/>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label class="form-label">Email Address</label>
+      <input class="form-input" type="email" placeholder="your@email.com" id="email"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Phone Number</label>
+      <input class="form-input" type="tel" placeholder="+XX XXX XXX XXXX" id="phone"/>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- SHIPPING -->
+    <h2 class="section-title">Shipping Address</h2>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label class="form-label">Country</label>
+      <select class="form-select" id="country">
+        <option value="">Select Country</option>
+        <option>Bangladesh</option>
+        <option>United States</option>
+        <option>United Kingdom</option>
+        <option>Canada</option>
+        <option>Australia</option>
+        <option>India</option>
+        <option>Pakistan</option>
+        <option>Germany</option>
+        <option>France</option>
+        <option>UAE</option>
+        <option>Saudi Arabia</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label class="form-label">Full Address</label>
+      <input class="form-input" type="text" placeholder="Street address, apartment, etc." id="address"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">City</label>
+        <input class="form-input" type="text" placeholder="City" id="city"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Postal Code</label>
+        <input class="form-input" type="text" placeholder="Postal Code" id="postal"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">State / Region</label>
+      <input class="form-input" type="text" placeholder="State or Region" id="state"/>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PAYMENT -->
+    <h2 class="section-title">Payment Method</h2>
+    <div class="payment-methods">
+      <label class="payment-option selected" id="cardOption">
+        <input type="radio" name="payment" value="card" checked onchange="showCardFields(true)"/>
+        <span class="payment-option-label">Credit / Debit Card</span>
+        <div class="payment-option-icons">
+          <span class="pay-icon">Visa</span>
+          <span class="pay-icon">MC</span>
+        </div>
+      </label>
+      <label class="payment-option" id="paypalOption">
+        <input type="radio" name="payment" value="paypal" onchange="showCardFields(false)"/>
+        <span class="payment-option-label">PayPal</span>
+        <div class="payment-option-icons">
+          <span class="pay-icon">PayPal</span>
+        </div>
+      </label>
+      <label class="payment-option" id="stripeOption">
+        <input type="radio" name="payment" value="stripe" onchange="showCardFields(false)"/>
+        <span class="payment-option-label">Stripe</span>
+        <div class="payment-option-icons">
+          <span class="pay-icon">Stripe</span>
+        </div>
+      </label>
+    </div>
+
+    <div class="card-fields show" id="cardFields">
+      <div class="form-group" style="margin-bottom:16px;">
+        <label class="form-label">Card Number</label>
+        <input class="form-input" type="text" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" id="cardNum"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Expiry Date</label>
+          <input class="form-input" type="text" placeholder="MM / YY" maxlength="7" id="expiry"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">CVV</label>
+          <input class="form-input" type="text" placeholder="XXX" maxlength="4" id="cvv"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Name on Card</label>
+        <input class="form-input" type="text" placeholder="Full name as on card" id="cardName"/>
+      </div>
+    </div>
+
+    <div class="checkout-actions">
+      <a href="cart.html" class="btn-back"><i class="bi bi-arrow-left"></i> Back</a>
+      <button class="btn-place" onclick="placeOrder()">Place Order <i class="bi bi-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <!-- SUMMARY SIDE -->
+  <div class="checkout-summary-side">
+    <h2 class="section-title">Order Summary</h2>
+    <div class="summary-items" id="summaryItems"></div>
+
+    <div class="coupon-row">
+      <input class="coupon-input" type="text" placeholder="Coupon code" id="couponCode"/>
+      <button class="coupon-btn" onclick="applyCoupon()">Apply</button>
+    </div>
+
+    <div class="summary-rows">
+      <div class="sum-row">
+        <span class="sum-label">Subtotal</span>
+        <span class="sum-value" id="sub">$0.00</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-label">Shipping</span>
+        <span class="sum-value" id="ship">Free</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-label">Discount</span>
+        <span class="sum-value" id="disc" style="color:#c0392b;">-$0.00</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-label">Tax (10%)</span>
+        <span class="sum-value" id="taxAmt">$0.00</span>
+      </div>
+    </div>
+    <div class="sum-total">
+      <span class="sum-total-label">Total</span>
+      <span class="sum-total-val" id="totalAmt">$0.00</span>
+    </div>
+
+    <div class="security-info">
+      <div class="security-item">
+        <i class="bi bi-shield-check"></i>
+        <span>Secure SSL Encryption</span>
+      </div>
+      <div class="security-item">
+        <i class="bi bi-arrow-return-left"></i>
+        <span>30-Day Free Returns</span>
+      </div>
+      <div class="security-item">
+        <i class="bi bi-truck"></i>
+        <span>Fast Worldwide Shipping</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let discountAmt=0;
+const cart=JSON.parse(localStorage.getItem('cart')||'[]');
+document.querySelector('.cart-count').textContent=cart.length;
+
+function toggleMenu(){
+  const menu=document.getElementById('mobileMenu');
+  menu.classList.toggle('active');
+}
+
+function closeMenu(){
+  document.getElementById('mobileMenu').classList.remove('active');
+}
+
+document.addEventListener('click',function(e){
+  const menu=document.getElementById('mobileMenu');
+  const toggle=document.getElementById('menuToggle');
+  if(!menu.contains(e.target)&&!toggle.contains(e.target)){
+    menu.classList.remove('active');
+  }
+});
+
+function renderSummary(){
+  const container=document.getElementById('summaryItems');
+  container.innerHTML='';
+  let sub=0;
+  cart.forEach(item=>{
+    const price=parseFloat(item.price)||29;
+    const qty=item.qty||1;
+    sub+=price*qty;
+    container.innerHTML+=`
+    <div class="summary-item">
+      <div class="summary-item-img">
+        <i class="bi bi-image"></i>
+        <span class="item-qty-badge">${qty}</span>
+      </div>
+      <div>
+        <p class="summary-item-name">${item.name||'XXXXXX Product'}</p>
+        <p class="summary-item-meta">Size: ${item.size||'M'} · Color: ${item.color||'Black'}</p>
+      </div>
+      <span class="summary-item-price">$${(price*qty).toFixed(2)}</span>
+    </div>`;
+  });
+  if(cart.length===0){
+    container.innerHTML='<p style="font-size:12px;color:var(--fog);padding:16px 0;">No items in cart.</p>';
+  }
+  const tax=sub*0.1;
+  const ship=sub>150?0:15;
+  const total=sub+tax+ship-discountAmt;
+  document.getElementById('sub').textContent='$'+sub.toFixed(2);
+  document.getElementById('ship').textContent=ship===0?'Free':'$'+ship.toFixed(2);
+  document.getElementById('disc').textContent='-$'+discountAmt.toFixed(2);
+  document.getElementById('taxAmt').textContent='$'+tax.toFixed(2);
+  document.getElementById('totalAmt').textContent='$'+Math.max(0,total).toFixed(2);
+}
+
+function showCardFields(show){
+  document.getElementById('cardFields').className='card-fields'+(show?' show':'');
+  document.querySelectorAll('.payment-option').forEach(o=>o.classList.remove('selected'));
+  event.currentTarget.closest('.payment-option').classList.add('selected');
+}
+
+function applyCoupon(){
+  const code=document.getElementById('couponCode').value.trim().toUpperCase();
+  if(code==='XXXXXX'||code==='SAVE10'){discountAmt=10;renderSummary();alert('Coupon applied!');}
+  else alert('Invalid coupon code.');
+}
+
+function placeOrder(){
+  const first=document.getElementById('firstName').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const country=document.getElementById('country').value;
+  const address=document.getElementById('address').value.trim();
+  if(!first||!email||!country||!address){alert('Please fill in all required fields.');return;}
+  localStorage.setItem('orderPlaced','true');
+  localStorage.removeItem('cart');
+  window.location.href='order-confirm.html';
+}
+
+// Card number formatting
+document.getElementById('cardNum').addEventListener('input',function(){
+  this.value=this.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim();
+});
+document.getElementById('expiry').addEventListener('input',function(){
+  this.value=this.value.replace(/\D/g,'').replace(/^(.{2})(.+)/,'$1 / $2');
+});
+
+renderSummary();
+</script>
+</body>
+</html>
