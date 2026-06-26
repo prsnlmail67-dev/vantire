@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Wishlist — XXXXXX</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"/>
+<style>
+:root{
+  --charcoal:#2B2B2B;
+  --iron:#565656;
+  --fog:#848484;
+  --silver:#B3B3B3;
+  --cloud:#E0E0E0;
+  --white:#FFFFFF;
+  --bg:#F7F7F7;
+  --accent:#d4af37;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;}
+body{font-family:'Montserrat',sans-serif;background:var(--white);color:var(--charcoal);overflow-x:hidden;}
+
+/* ANNOUNCEMENT */
+.announcement{background:var(--charcoal);color:var(--white);text-align:center;padding:10px 16px;font-size:11px;letter-spacing:2px;text-transform:uppercase;word-break:break-word;}
+
+/* NAVIGATION */
+nav{position:sticky;top:0;z-index:100;background:var(--white);border-bottom:1px solid var(--cloud);box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.nav-top{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;flex-wrap:wrap;gap:12px;}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;letter-spacing:6px;color:var(--charcoal);text-decoration:none;flex:1;}
+.nav-icons{display:flex;align-items:center;gap:20px;}
+.nav-icons a{color:var(--charcoal);font-size:20px;text-decoration:none;position:relative;transition:color 0.3s;}
+.nav-icons a:hover{color:var(--iron);}
+.cart-count{position:absolute;top:-8px;right:-8px;background:var(--charcoal);color:var(--white);width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;}
+.menu-toggle{display:none;flex-direction:column;gap:6px;cursor:pointer;background:none;border:none;padding:8px;}
+.menu-toggle span{width:24px;height:2px;background:var(--charcoal);transition:all 0.3s;}
+
+/* MOBILE MENU */
+.mobile-menu{display:none;position:fixed;top:60px;left:0;right:0;bottom:0;background:var(--white);z-index:99;flex-direction:column;overflow-y:auto;border-top:1px solid var(--cloud);}
+.mobile-menu.active{display:flex;}
+.mobile-menu-item{padding:14px 20px;border-bottom:1px solid var(--cloud);font-size:13px;text-decoration:none;color:var(--charcoal);display:block;transition:background 0.3s;}
+.mobile-menu-item:hover{background:var(--bg);}
+.mobile-menu-item.sale{color:#c0392b;font-weight:600;}
+
+/* NAVIGATION BOTTOM */
+.nav-bottom{display:flex;align-items:center;justify-content:center;gap:32px;padding:12px 24px;border-top:1px solid var(--cloud);overflow-x:auto;flex-wrap:wrap;}
+.nav-bottom a{text-decoration:none;color:var(--charcoal);font-size:11px;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;padding:6px 0;border-bottom:1px solid transparent;transition:all 0.3s;font-weight:500;}
+.nav-bottom a:hover{border-bottom-color:var(--charcoal);color:var(--iron);}
+.nav-bottom a.sale{color:#c0392b;font-weight:600;}
+
+/* PAGE HEADER */
+.page-header{padding:40px 24px 28px;text-align:center;}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,6vw,52px);font-weight:300;letter-spacing:2px;color:var(--charcoal);margin-bottom:8px;}
+.page-subtitle{font-size:11px;color:var(--fog);letter-spacing:1px;font-weight:500;}
+
+/* WISHLIST EMPTY */
+.wishlist-empty{text-align:center;padding:80px 24px;display:none;}
+.wishlist-empty i{font-size:64px;color:var(--cloud);margin-bottom:24px;}
+.wishlist-empty h2{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;margin-bottom:12px;color:var(--charcoal);}
+.wishlist-empty p{font-size:12px;color:var(--fog);margin-bottom:32px;line-height:1.6;}
+.empty-btn{display:inline-block;padding:13px 32px;background:var(--charcoal);color:var(--white);text-decoration:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;transition:all 0.3s;border-radius:2px;}
+.empty-btn:hover{background:var(--iron);transform:translateY(-2px);}
+
+/* WISHLIST GRID */
+.wishlist-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:0 24px 80px;max-width:1400px;margin:0 auto;}
+.wish-card{position:relative;transition:transform 0.3s;}
+.wish-card:hover{transform:translateY(-4px);}
+
+.wish-img{aspect-ratio:3/4;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--silver);font-size:48px;position:relative;overflow:hidden;border-radius:4px;}
+.wish-img i{transition:transform 0.4s;}
+.wish-card:hover .wish-img i{transform:scale(1.1);}
+
+.wish-remove{position:absolute;top:12px;right:12px;width:36px;height:36px;background:rgba(255,255,255,0.95);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--charcoal);transition:all 0.3s;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.15);}
+.wish-remove:hover{background:var(--charcoal);color:var(--white);}
+
+.wish-info{padding:16px 0 0;}
+.wish-brand{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--fog);margin-bottom:6px;font-weight:600;}
+.wish-name{font-size:13px;color:var(--charcoal);margin-bottom:8px;font-weight:600;line-height:1.4;}
+.wish-price{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--charcoal);}
+
+.wish-add{width:100%;padding:12px 16px;background:transparent;border:1.5px solid var(--cloud);font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-family:'Montserrat',sans-serif;color:var(--charcoal);font-weight:600;border-radius:2px;}
+.wish-add:hover{background:var(--charcoal);color:var(--white);border-color:var(--charcoal);}
+.wish-add.added{background:var(--charcoal);color:var(--white);border-color:var(--charcoal);}
+
+/* FOOTER */
+footer{background:var(--charcoal);color:var(--white);padding:60px 24px 0;}
+.footer-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;letter-spacing:6px;margin-bottom:16px;display:block;text-decoration:none;color:var(--white);}
+.footer-text{font-size:12px;line-height:1.8;color:rgba(255,255,255,0.6);margin-bottom:20px;}
+.footer-socials{display:flex;gap:12px;}
+.footer-socials a{width:36px;height:36px;border:1px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;color:var(--white);text-decoration:none;font-size:14px;transition:all 0.3s;border-radius:2px;}
+.footer-socials a:hover{background:var(--white);color:var(--charcoal);}
+.footer-col-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;font-weight:600;}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:12px;}
+.footer-links a{font-size:12px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.3s;}
+.footer-links a:hover{color:var(--white);}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding:24px 0;flex-wrap:wrap;gap:16px;}
+.footer-copy{font-size:11px;color:rgba(255,255,255,0.4);}
+.payment-badges{display:flex;gap:8px;flex-wrap:wrap;}
+.payment-badge{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);font-size:9px;padding:6px 10px;text-transform:uppercase;border-radius:2px;}
+
+/* BACK TO TOP */
+.back-top{position:fixed;bottom:32px;right:32px;width:44px;height:44px;background:var(--charcoal);color:var(--white);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;opacity:0;transform:translateY(10px);transition:all 0.3s;z-index:50;border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+.back-top:hover{background:var(--iron);transform:translateY(-4px);}
+.back-top.visible{opacity:1;transform:translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:1200px){
+  .wishlist-grid{grid-template-columns:repeat(3,1fr);gap:16px;}
+  .footer-top{grid-template-columns:1.5fr 1fr 1fr;gap:32px;}
+}
+
+@media(max-width:768px){
+  .announcement{font-size:10px;padding:8px 12px;}
+  
+  .nav-top{padding:14px 16px;gap:10px;}
+  .nav-logo{font-size:18px;letter-spacing:4px;}
+  .nav-icons{gap:14px;}
+  .menu-toggle{display:flex;}
+  
+  .nav-bottom{display:none;padding:10px 16px;gap:16px;}
+  .nav-bottom.active{display:flex;flex-direction:column;border-top:none;}
+  
+  .page-header{padding:28px 16px 20px;}
+  .page-title{font-size:clamp(22px,5vw,32px);margin-bottom:6px;}
+  .page-subtitle{font-size:10px;}
+  
+  .wishlist-grid{grid-template-columns:repeat(2,1fr);gap:12px;padding:0 16px 60px;}
+  
+  .wish-img{font-size:32px;}
+  .wish-remove{width:32px;height:32px;font-size:14px;top:8px;right:8px;}
+  
+  .wish-info{padding:12px 0 0;}
+  .wish-brand{font-size:8px;margin-bottom:4px;}
+  .wish-name{font-size:12px;margin-bottom:6px;}
+  .wish-price{font-size:12px;margin-bottom:10px;}
+  
+  .wish-add{padding:10px 12px;font-size:9px;}
+  
+  .footer-top{grid-template-columns:1fr 1fr;gap:24px;}
+  footer{padding:40px 16px 0;}
+  
+  .wishlist-empty{padding:60px 16px;}
+  .wishlist-empty i{font-size:48px;}
+  .wishlist-empty h2{font-size:24px;}
+  
+  .back-top{bottom:24px;right:24px;width:40px;height:40px;font-size:16px;}
+}
+
+@media(max-width:480px){
+  .announcement{font-size:9px;padding:6px 10px;letter-spacing:1px;}
+  
+  .nav-top{padding:12px 14px;}
+  .nav-logo{font-size:14px;letter-spacing:3px;}
+  .nav-icons{gap:12px;font-size:16px;}
+  
+  .page-header{padding:20px 14px 16px;}
+  .page-title{font-size:20px;}
+  .page-subtitle{font-size:9px;}
+  
+  .wishlist-grid{grid-template-columns:repeat(2,1fr);gap:10px;padding:0 12px 48px;}
+  
+  .wish-img{font-size:28px;}
+  .wish-remove{width:30px;height:30px;font-size:12px;}
+  
+  .wish-info{padding:10px 0 0;}
+  .wish-brand{font-size:8px;}
+  .wish-name{font-size:11px;}
+  .wish-price{font-size:11px;}
+  
+  .wish-add{padding:9px 10px;font-size:8px;}
+  
+  .footer-top{grid-template-columns:1fr;gap:20px;}
+  .footer-bottom{flex-direction:column;align-items:flex-start;padding:16px 0;}
+  footer{padding:32px 14px 0;}
+  
+  .wishlist-empty{padding:48px 14px;}
+  .wishlist-empty i{font-size:40px;margin-bottom:16px;}
+  .wishlist-empty h2{font-size:20px;margin-bottom:10px;}
+  
+  .back-top{bottom:16px;right:16px;width:38px;height:38px;font-size:14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="announcement">Free shipping on orders over $150 — Use code: XXXXXX</div>
+
+<nav>
+  <div class="nav-top">
+    <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <a href="index.html" class="nav-logo">XXXXXX</a>
+    <div class="nav-icons">
+      <a href="#"><i class="bi bi-search"></i></a>
+      <a href="wishlist.html"><i class="bi bi-heart-fill"></i></a>
+      <a href="login.html"><i class="bi bi-person"></i></a>
+      <a href="cart.html" style="position:relative;">
+        <i class="bi bi-bag"></i>
+        <span class="cart-count">0</span>
+      </a>
+    </div>
+  </div>
+  <div class="nav-bottom" id="navBottom">
+    <a href="#">New Arrivals</a>
+    <a href="#">Men</a>
+    <a href="#">Women</a>
+    <a href="#">Kids</a>
+    <a href="#">Tops</a>
+    <a href="#">Bottoms</a>
+    <a href="#">Outerwear</a>
+    <a href="#">Footwear</a>
+    <a href="#">Accessories</a>
+    <a href="#">Brands</a>
+    <a href="#" class="sale">Sale</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <h1 class="page-title">My Wishlist</h1>
+  <p class="page-subtitle" id="wishCountLabel">0 Items Saved</p>
+</div>
+
+<div class="wishlist-empty" id="wishEmpty">
+  <i class="bi bi-heart"></i>
+  <h2>Your wishlist is empty</h2>
+  <p>Save items you love and come back to them later.</p>
+  <a href="products.html" class="empty-btn">Browse Products</a>
+</div>
+
+<div class="wishlist-grid" id="wishGrid"></div>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <a href="index.html" class="footer-logo">XXXXXX</a>
+      <p class="footer-text">We have clothes that suit your style.</p>
+      <div class="footer-socials">
+        <a href="#"><i class="bi bi-facebook"></i></a>
+        <a href="#"><i class="bi bi-instagram"></i></a>
+        <a href="#"><i class="bi bi-tiktok"></i></a>
+        <a href="#"><i class="bi bi-twitter-x"></i></a>
+      </div>
+    </div>
+    <div>
+      <p class="footer-col-title">Company</p>
+      <ul class="footer-links">
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Help</p>
+      <ul class="footer-links">
+        <li><a href="orders.html">Orders</a></li>
+        <li><a href="refund-policy.html">Refund Policy</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Info</p>
+      <ul class="footer-links">
+        <li><a href="size-guide.html">Size Guide</a></li>
+        <li><a href="track-order.html">Track Order</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 XXXXXX. All Rights Reserved.</span>
+    <div class="payment-badges">
+      <span class="payment-badge">Visa</span>
+      <span class="payment-badge">Mastercard</span>
+      <span class="payment-badge">PayPal</span>
+    </div>
+  </div>
+</footer>
+
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <i class="bi bi-arrow-up"></i>
+</button>
+
+<script>
+const cart=JSON.parse(localStorage.getItem('cart')||'[]');
+document.querySelector('.cart-count').textContent=cart.length;
+
+// Mobile menu toggle
+function toggleMenu(){
+  const navBottom=document.getElementById('navBottom');
+  navBottom.classList.toggle('active');
+}
+
+// Close menu on link click
+document.getElementById('navBottom').addEventListener('click', function(e){
+  if(e.target.tagName === 'A'){
+    this.classList.remove('active');
+  }
+});
+
+// Close menu when clicking outside
+document.addEventListener('click', function(e){
+  const navBottom=document.getElementById('navBottom');
+  const toggle=document.getElementById('menuToggle');
+  if(!navBottom.contains(e.target) && !toggle.contains(e.target)){
+    navBottom.classList.remove('active');
+  }
+});
+
+// Sample wishlist items
+const wishItems=[
+  {name:'Plain White Shirt',price:29,brand:'XXXXXX'},
+  {name:'Oversized Hoodie',price:45,brand:'XXXXXX'},
+  {name:'Slim Fit Trousers',price:39,brand:'XXXXXX'},
+  {name:'Leather Sneakers',price:89,brand:'XXXXXX'},
+  {name:'Denim Jacket',price:75,brand:'XXXXXX'},
+  {name:'Classic T-Shirt',price:25,brand:'XXXXXX'},
+  {name:'Wool Sweater',price:55,brand:'XXXXXX'},
+  {name:'Casual Shorts',price:35,brand:'XXXXXX'},
+];
+
+const grid=document.getElementById('wishGrid');
+const empty=document.getElementById('wishEmpty');
+const label=document.getElementById('wishCountLabel');
+
+if(wishItems.length===0){
+  empty.style.display='block';
+} else {
+  label.textContent=wishItems.length+' Item'+(wishItems.length!==1?'s':'')+' Saved';
+  wishItems.forEach((item,i)=>{
+    grid.innerHTML+=`
+    <div class="wish-card">
+      <div class="wish-img">
+        <i class="bi bi-image"></i>
+        <button class="wish-remove" title="Remove from wishlist" onclick="removeFromWishlist(${i})"><i class="bi bi-x"></i></button>
+      </div>
+      <div class="wish-info">
+        <p class="wish-brand">${item.brand}</p>
+        <p class="wish-name">${item.name}</p>
+        <p class="wish-price">$${item.price}.00</p>
+        <button class="wish-add" onclick="moveToCart('${item.name}',${item.price},this)">Move to Cart</button>
+      </div>
+    </div>`;
+  });
+}
+
+function removeFromWishlist(index){
+  if(confirm('Remove this item from wishlist?')){
+    wishItems.splice(index,1);
+    location.reload();
+  }
+}
+
+function moveToCart(name,price,btn){
+  const c=JSON.parse(localStorage.getItem('cart')||'[]');
+  c.push({name,price,qty:1,size:'M',color:'Black'});
+  localStorage.setItem('cart',JSON.stringify(c));
+  document.querySelector('.cart-count').textContent=c.length;
+  btn.textContent='Added!';
+  btn.classList.add('added');
+  setTimeout(()=>{
+    btn.textContent='Move to Cart';
+    btn.classList.remove('added');
+  },2000);
+}
+
+// Back to top button
+window.addEventListener('scroll',()=>{
+  const b=document.getElementById('backTop');
+  if(window.scrollY>400){
+    b.classList.add('visible');
+  } else {
+    b.classList.remove('visible');
+  }
+});
+</script>
+
+</body>
+</html>
